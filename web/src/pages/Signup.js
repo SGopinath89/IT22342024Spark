@@ -14,25 +14,30 @@ function SignupPage () {
 		document.title = "Sign Up"
 	}, [])
 
-	async function doRegister() {
-		event.preventDefault()
-		setLoading(true)
-		
-		const form = event.target
-		const formData = new FormData(form)
-		const response = await signup(formData)
-		
-		if (response.status == "success") {
-			Swal.fire("Success", response.message, "success")
-				.then(function () {
-					navigate("/Login")
-				})
-		} else {
-			Swal.fire("Error", response.message, "error")
+	async function doRegister(event) {
+		try {
+			event.preventDefault();
+			setLoading(true);
+	
+			const form = event.target;
+			const formData = new FormData(form);
+			const response = await signup(formData);
+	
+			if (response.status === "success") {
+				Swal.fire("Success", response.message, "success")
+					.then(function () {
+						navigate("/Login");
+					});
+			} else {
+				Swal.fire("Error", response.message, "error");
+			}
+		} catch (error) {
+			Swal.fire("Error", error.message, "error");
+		} finally {
+			setLoading(false);
 		}
-
-		setLoading(false)
 	}
+	
 
 	return (
 		<div className="container-fluid pdng0">
