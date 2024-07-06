@@ -53,37 +53,43 @@ function LoginPage () {
 		setLoading(false)
 	}
 
-	async function doLogin () {
-		event.preventDefault()
-		const form = event.target
-		const formData = new FormData(form)
-
-		setLoading(true)
-		const response = await login(formData)
-		if (response.status == "success") {
-			const accessToken = response.accessToken
-			localStorage.setItem("accessToken", accessToken)
-
-			dispatch({
-				type: "updateUser",
-				user: response.data
-			})
-
-			if (response.hasKey) {
-				setLoading(false)
-				if (response.profileImage == "") {
-					navigate("/UpdateProfile")
+	async function doLogin(event) {
+		try {
+			event.preventDefault();
+			const form = event.target;
+			const formData = new FormData(form);
+	
+			setLoading(true);
+			const response = await login(formData);
+	
+			if (response.status === "success") {
+				const accessToken = response.accessToken;
+				localStorage.setItem("accessToken", accessToken);
+	
+				dispatch({
+					type: "updateUser",
+					user: response.data
+				});
+	
+				if (response.hasKey) {
+					if (response.profileImage === "") {
+						navigate("/UpdateProfile");
+					} else {
+						navigate("/");
+					}
 				} else {
-					navigate("/")
+					doUpdateKeys();
 				}
 			} else {
-				doUpdateKeys()
+				Swal.fire("Error", response.message, "error");
 			}
-		} else {
-			Swal.fire("Error", response.message, "error")
-			setLoading(false)
+		} catch (error) {
+			Swal.fire("Error", error.message, "error");
+		} finally {
+			setLoading(false);
 		}
 	}
+	
 
 	return (
 		<div className="container-fluid pdng0">
