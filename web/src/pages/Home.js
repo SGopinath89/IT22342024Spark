@@ -84,31 +84,43 @@ function HomePage() {
 	}
 	
 
-	async function doPost() {
-		event.preventDefault()
-		setAddingPost(true)
-
-		const form = event.target
-		const formData = new FormData(form)
-		formData.append("accessToken", localStorage.getItem("accessToken"))
-
-		const response = await addPost(formData)
-		setAddingPost(false)
-
-		if (response.status == "success") {
-			const postObj = response.postObj
-			form.reset()
-
-			// prepend in newsfeed
-			const tempPosts = [...posts]
-			tempPosts.unshift(postObj)
-			setPosts(tempPosts)
-
-			// render wave surfers for audio
-		} else {
-			Swal.fire("Error", response.message, "error")
+	async function doPost(event) {
+		try {
+			event.preventDefault();
+			setAddingPost(true);
+	
+			const form = event.target;
+			const formData = new FormData(form);
+			const accessToken = localStorage.getItem("accessToken");
+	
+			if (!accessToken) {
+				throw new Error("Access token not found");
+			}
+	
+			formData.append("accessToken", accessToken);
+	
+			const response = await addPost(formData);
+			setAddingPost(false);
+	
+			if (response.status === "success") {
+				const postObj = response.postObj;
+				form.reset();
+	
+				// prepend in newsfeed
+				const tempPosts = [...posts];
+				tempPosts.unshift(postObj);
+				setPosts(tempPosts);
+	
+				// render wave surfers for audio
+			} else {
+				Swal.fire("Error", response.message, "error");
+			}
+		} catch (error) {
+			setAddingPost(false);
+			Swal.fire("Error", error.message, "error");
 		}
 	}
+	
 
 	function showPopupYoutubeURL () {
 		$("#modalYoutube").modal("show")
