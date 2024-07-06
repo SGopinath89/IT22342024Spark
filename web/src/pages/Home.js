@@ -40,22 +40,49 @@ function HomePage() {
 	}, [])
 
 	async function fetchNewsfeed() {
-		const formData = new FormData()
-		formData.append("accessToken", localStorage.getItem("accessToken"))
-		const response = await getNewsfeed(formData)
-		if (response.status == "success") {
-			setPosts(response.data)
+		try {
+			const accessToken = localStorage.getItem("accessToken");
+			if (!accessToken) {
+				throw new Error("Access token not found");
+			}
+	
+			const formData = new FormData();
+			formData.append("accessToken", accessToken);
+	
+			const response = await getNewsfeed(formData);
+	
+			if (response.status === "success") {
+				setPosts(response.data);
+			} else {
+				console.error("Failed to fetch newsfeed:", response);
+			}
+		} catch (error) {
+			console.error("An error occurred while fetching the newsfeed:", error);
 		}
 	}
 
 	async function getStories() {
-		const formData = new FormData()
-		formData.append("accessToken", localStorage.getItem("accessToken"))
-		const response = await fetchStories(formData)
-		if (response.status == "success") {
-			setStories(response.data)
+		try {
+			const accessToken = localStorage.getItem("accessToken");
+			if (!accessToken) {
+				throw new Error("Access token not found");
+			}
+	
+			const formData = new FormData();
+			formData.append("accessToken", accessToken);
+	
+			const response = await fetchStories(formData);
+	
+			if (response.status === "success") {
+				setStories(response.data);
+			} else {
+				console.error("Failed to fetch stories:", response);
+			}
+		} catch (error) {
+			console.error("An error occurred while fetching the stories:", error);
 		}
 	}
+	
 
 	async function doPost() {
 		event.preventDefault()
