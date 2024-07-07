@@ -93,9 +93,6 @@ path.icon{
 
 
 /*BACKGROUND COLORS*/
-*{
-	background-color: #ffffff;
-}
 
 #nprogress .bar,
 .timeline-info > ul li a::before,
